@@ -1,0 +1,51 @@
+services:
+
+  agent1-sensor:
+    build:
+      context: ./agent1-sensor
+
+    container_name: agent1-sensor
+
+    environment:
+      AGENT2_URL: http://agent2-analyzer:8000
+
+    ports:
+      - "8001:8000"
+
+    depends_on:
+      - agent2-analyzer
+
+    cpus: "2.0"
+    mem_limit: 4g
+
+
+  agent2-analyzer:
+    build:
+      context: ./agent2-analyzer
+
+    container_name: agent2-analyzer
+
+    environment:
+      AGENT3_URL: http://agent3-decision:8000
+
+    ports:
+      - "8002:8000"
+
+    depends_on:
+      - agent3-decision
+
+    cpus: "2.0"
+    mem_limit: 4g
+
+
+  agent3-decision:
+    build:
+      context: ./agent3-decision
+
+    container_name: agent3-decision
+
+    ports:
+      - "8003:8000"
+
+    cpus: "2.0"
+    mem_limit: 4g
