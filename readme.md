@@ -181,274 +181,105 @@ Phase 1 hiện tại chạy ổn định với workload MVP và mức sử dụn
 
 ---
 
-# Phase 2 — Distributed Edge Deployment
+# Phase 2 — AI Upgrade
 
 ## 8. Mục tiêu
 
-Chuyển MVP từ mô hình chạy tập trung trên một máy:
+Phase 2 tập trung vào **nâng cấp AI cho Agent 2 — Analyzer**.
+
+Phase 1 sử dụng ML model nhỏ để hoàn thiện MVP và thiết lập baseline.
+
+Phase 2 nâng cấp Agent 2 lên mô hình AI thực tế và có tính kỹ thuật cao hơn, ví dụ **Ollama / LLM**, nhưng vẫn phải hoạt động trong resource constraint:
 
 ```text
-1 Machine
-   │
-   ├── Docker Agent 1
-   ├── Docker Agent 2
-   └── Docker Agent 3
+CPU : 2 vCPU
+RAM : 4 GB
+Mode: CPU-only
 ```
 
-sang mô hình phân tán:
-
-```text
-Edge VM 1
-2 vCPU / 4 GB
-└── Agent 1
-
-
-        HTTP Network
-
-
-Edge VM 2
-2 vCPU / 4 GB
-└── Agent 2
-
-
-        HTTP Network
-
-
-Edge VM 3
-2 vCPU / 4 GB
-└── Agent 3
-```
+Mục tiêu là đánh giá khả năng chạy AI model nâng cao trong môi trường Edge resource-constrained.
 
 ---
 
-## 9. Mục tiêu chính Phase 2
+## 9. AI Upgrade
 
-* [ ] Tạo 3 Edge VM riêng biệt.
-* [ ] Mỗi VM có 2 vCPU / 4 GB RAM.
-* [ ] CPU-only.
-* [ ] Deploy đúng 1 Agent trên mỗi VM.
-* [ ] Các Agent giao tiếp thật qua IP/network.
-* [ ] Không sử dụng shared memory giữa các Agent.
-* [ ] Không sử dụng function call nội bộ thay cho network communication.
-* [ ] Cấu hình network/security.
-* [ ] Kiểm tra health giữa các VM.
-* [ ] Chạy End-to-End test trên 3 VM.
-* [ ] Test fault tolerance bằng cách shutdown một VM/container.
-* [ ] Benchmark lại trên môi trường distributed.
-* [ ] Đo CPU/RAM/latency/throughput trên từng Edge VM.
-* [ ] So sánh Phase 2 với baseline Phase 1.
-
----
-
-## 10. Kiến trúc Phase 2
+Agent 2 được nâng cấp từ:
 
 ```text
-                         HTTP
-┌────────────────┐ ───────────────> ┌────────────────┐
-│ Edge VM 1      │                  │ Edge VM 2      │
-│ 2 vCPU / 4 GB  │                  │ 2 vCPU / 4 GB  │
-│                │                  │                │
-│ Agent 1        │                  │ Agent 2        │
-│ Sensor         │                  │ Analyzer       │
-└────────────────┘                  └───────┬────────┘
-                                            │
-                                            │ HTTP
-                                            ▼
-                                    ┌────────────────┐
-                                    │ Edge VM 3      │
-                                    │ 2 vCPU / 4 GB  │
-                                    │                │
-                                    │ Agent 3        │
-                                    │ Decision       │
-                                    └────────────────┘
+Phase 1
+Simple ML
+      ↓
+Phase 2
+Advanced AI / LLM
 ```
 
----
+Các hướng nghiên cứu:
 
-## 11. Nguyên tắc Phase 2
+* Ollama.
+* Lightweight LLM.
+* Model phù hợp với 2 vCPU / 4 GB RAM.
+* CPU-only inference.
+* Model optimization nếu cần.
+* Quantization nếu cần.
+* Local AI inference.
 
-### Không tối ưu sớm
-
-Không thay đổi logic Agent nếu không cần thiết.
-
-Mục tiêu Phase 2 là chứng minh:
-
-```text
-Cùng một MVP
-     ↓
-3 Edge VM độc lập
-     ↓
-Real Network
-     ↓
-Distributed System
-     ↓
-Distributed Benchmark
-```
-
-Chỉ sau khi Phase 2 chạy ổn định mới thực hiện optimization.
+Kiến trúc Multi-Agent và giao tiếp HTTP của Phase 1 được giữ nguyên.
 
 ---
 
-# Phase 3 — Edge AI Optimization & Advanced Evaluation
+## 10. Benchmark Phase 2
 
-## 12. Mục tiêu
+Benchmark Phase 2 được so sánh với baseline Phase 1.
 
-Phase 3 tập trung vào tối ưu Edge AI và đánh giá các trade-off:
+Các metric chính:
+
+* CPU usage.
+* RAM usage.
+* Inference latency.
+* E2E latency.
+* p50 latency.
+* p95 latency.
+* Throughput.
+* Model size.
+* AI response quality.
+
+Mục tiêu là đánh giá trade-off giữa:
 
 ```text
-Model Quality
+AI Capability
+      ↕
+CPU / RAM
       ↕
 Latency
-      ↕
-CPU
-      ↕
-RAM
       ↕
 Throughput
 ```
 
 ---
 
-## 13. Các hướng nâng cấp
+## 11. Mục tiêu hoàn thành Phase 2
 
-### 13.1 Local AI nâng cao
-
-Có thể nghiên cứu:
-
-* Thay hoặc bổ sung model AI nhẹ hơn/thực tế hơn.
-* Local LLM nếu phù hợp.
-* Chọn model có kích thước phù hợp với giới hạn 4 GB RAM.
-* Quantization nếu sử dụng LLM.
-* Ghi rõ model size.
-* Ghi rõ parameter count.
-* Ghi rõ quantization level.
-
----
-
-### 13.2 Optimization
-
-Thực hiện benchmark theo mô hình:
-
-```text
-Baseline Model
-      ↓
-Benchmark
-      ↓
-Optimized Model
-      ↓
-Benchmark
-      ↓
-Comparison
-```
-
-So sánh:
-
-* CPU
-* RAM
-* Latency
-* Throughput
-* Model quality
-
-Đánh giá ảnh hưởng của optimization tới chất lượng model.
+* [ ] Nâng cấp Agent 2 từ Simple ML lên Advanced AI.
+* [ ] Chạy được AI model trong môi trường CPU-only.
+* [ ] Đáp ứng resource constraint 2 vCPU / 4 GB RAM.
+* [ ] Ollama / LLM hoạt động ổn định nếu được lựa chọn.
+* [ ] Benchmark Phase 2.
+* [ ] So sánh với baseline Phase 1.
+* [ ] Đánh giá CPU / RAM / latency / throughput.
+* [ ] Đánh giá AI response quality.
+* [ ] Đảm bảo End-to-End flow vẫn hoạt động.
+* [ ] Đảm bảo fault tolerance vẫn hoạt động.
 
 ---
 
-### 13.3 Fault Tolerance nâng cao
-
-Có thể bổ sung:
-
-* Retry
-* Exponential backoff
-* Circuit breaker
-* Health checking
-* Automatic recovery
-
----
-
-### 13.4 Communication Optimization
-
-Sau khi HTTP ở Phase 2 ổn định, có thể nghiên cứu:
-
-```text
-HTTP
-  vs
-MQTT
-```
-
-So sánh:
-
-* Latency
-* Throughput
-* CPU
-* RAM
-* Network overhead
-* Reliability
-
-Không thực hiện phần này trước khi Phase 2 HTTP hoàn chỉnh.
-
----
-
-### 13.5 Benchmark nâng cao
-
-Benchmark với nhiều mức tải:
-
-```text
-10 requests
-100 requests
-500 requests
-1000 requests
-```
-
-Đo:
-
-* p50 latency
-* p95 latency
-* p99 latency
-* Throughput
-* CPU average
-* CPU peak
-* RAM peak
-* E2E latency
-* Agent-level latency
-
----
-
-### 13.6 So sánh Edge Architecture
-
-Có thể thực hiện hai mô hình.
-
-#### Case A — Edge-only
-
-```text
-Agent 1 → Agent 2 → Agent 3
-```
-
-#### Case B — Edge + Cloud
-
-```text
-Agent 1 → Agent 2 → Cloud/Server
-                         ↓
-                      Agent 3
-```
-
-Phân tích trade-off:
-
-* Latency
-* Resource usage
-* Network dependency
-* Accuracy
-* Cost
-
----
-
-# 14. Roadmap Tổng thể
+# 12. Roadmap Tổng thể
 
 ```text
 ┌──────────────────────────────────────┐
-│ PHASE 1 — MVP                        │
+│ PHASE 1 — MVP & DEMO                 │
 │                                      │
-│ 3 Docker Containers                 │
-│ 3 Agents                            │
+│ 3 Docker Containers                  │
+│ 3 Agents                             │
 │ HTTP                                │
 │ Local ML                            │
 │ CPU-only                            │
@@ -460,137 +291,73 @@ Phân tích trade-off:
                    │
                    ▼
 ┌──────────────────────────────────────┐
-│ PHASE 2 — DISTRIBUTED EDGE           │
+│ PHASE 2 — AI UPGRADE                 │
 │                                      │
-│ 3 Edge VM                            │
-│ 2 vCPU / 4 GB mỗi VM                │
-│ 1 Agent / VM                        │
-│ Real Network                        │
-│ Fault Tolerance                     │
-│ Distributed Benchmark               │
+│ Agent 2 AI Upgrade                  │
+│ Advanced AI / LLM                   │
+│ Ollama                              │
+│ CPU-only                            │
+│ 2 vCPU / 4 GB RAM                   │
+│ Local AI Inference                  │
+│ Benchmark                           │
+│ AI Quality Evaluation               │
 │                                      │
 │ STATUS: NEXT 🚀                      │
-└──────────────────┬───────────────────┘
-                   │
-                   ▼
-┌──────────────────────────────────────┐
-│ PHASE 3 — OPTIMIZATION               │
-│                                      │
-│ Model Optimization                   │
-│ Quantization                         │
-│ Advanced Benchmark                   │
-│ Retry / Circuit Breaker             │
-│ HTTP vs MQTT                         │
-│ Edge vs Cloud                        │
-│ Trade-off Analysis                   │
-│                                      │
-│ STATUS: PLANNED                      │
 └──────────────────────────────────────┘
 ```
 
 ---
 
-# 15. Nguyên tắc thực hiện
+# 13. Nguyên tắc thực hiện
 
-## Phase 2
-
-Không tối ưu sớm.
-
-Giữ nguyên MVP hiện tại càng nhiều càng tốt.
-
-Tập trung theo thứ tự:
+Phase 2 giữ nguyên kiến trúc và baseline của Phase 1.
 
 ```text
-Local Docker MVP
-      ↓
-3 Edge VM
-      ↓
-Real Network
-      ↓
-Distributed System
-      ↓
-Distributed Benchmark
+Phase 1
+Simple ML Baseline
+       ↓
+Agent 2 AI Upgrade
+       ↓
+Advanced AI / LLM
+       ↓
+2 vCPU / 4 GB RAM
+       ↓
+Benchmark
+       ↓
+Comparison
 ```
 
-Mục tiêu chính là chứng minh hệ thống **thực sự chạy phân tán trên 3 Edge node độc lập**.
+Không mở rộng sang Distributed Edge, MQTT hoặc Edge vs Cloud trong scope hiện tại.
 
 ---
 
-## Phase 3
+# 14. Current Status
 
-Chỉ bắt đầu sau khi Phase 2 hoàn chỉnh và ổn định.
+| Phase   | Nội dung                                                                          | Status      |
+| ------- | --------------------------------------------------------------------------------- | ----------- |
+| Phase 1 | MVP & Demo — 3 Agent / 3 Docker / HTTP / Local ML / Fault Tolerance / Benchmark   | ✅ COMPLETED |
+| Phase 2 | AI Upgrade — Agent 2 / Advanced AI / LLM / Ollama / 2 vCPU / 4 GB RAM / Benchmark | 🚀 NEXT     |
+
+---
+
+# 15. Mục tiêu của Chat tiếp theo
+
+Bắt đầu **Phase 2 — AI Upgrade** từ code Phase 1 hiện tại.
 
 Trình tự:
 
 ```text
-Phase 2 Stable
-      ↓
-Optimization
-      ↓
-Benchmark
-      ↓
-Comparison
-      ↓
-Trade-off Analysis
-      ↓
-Final Evaluation
+1. Kiểm tra Agent 2
+2. Xác định model ML hiện tại
+3. Xác định AI model phù hợp
+4. Tích hợp Advanced AI / Ollama
+5. Chạy CPU-only
+6. Giới hạn 2 vCPU / 4 GB RAM
+7. Test End-to-End
+8. Benchmark
+9. So sánh với Phase 1
+10. Đánh giá kết quả
 ```
-
----
-
-# 16. Current Status
-
-| Phase   | Nội dung                                                                  | Status      |
-| ------- | ------------------------------------------------------------------------- | ----------- |
-| Phase 1 | MVP — 3 Agent / 3 Docker / HTTP / Local ML / Fault Tolerance / Benchmark  | ✅ COMPLETED |
-| Phase 2 | Distributed Edge Deployment — 3 VM / Real Network / Distributed Benchmark | 🚀 NEXT     |
-| Phase 3 | Edge AI Optimization & Advanced Evaluation                                | 📋 PLANNED  |
-
----
-
-# 17. Mục tiêu của Chat tiếp theo
-
-Bắt đầu **Phase 2 — Distributed Edge Deployment** từ code Phase 1 hiện tại.
-
-Trình tự thực hiện:
-
-```text
-1. Kiểm tra cấu trúc code Phase 1
-            ↓
-2. Xác định IP / PORT và các biến cấu hình cần thay đổi
-            ↓
-3. Chuẩn bị 3 Edge VM
-            ↓
-4. Cấu hình network giữa 3 VM
-            ↓
-5. Deploy Agent 1 lên VM1
-            ↓
-6. Deploy Agent 2 lên VM2
-            ↓
-7. Deploy Agent 3 lên VM3
-            ↓
-8. Test health
-            ↓
-9. Test End-to-End
-            ↓
-10. Test fault tolerance
-            ↓
-11. Benchmark distributed
-            ↓
-12. So sánh với baseline Phase 1
-```
-
-### Điều kiện chuyển sang Phase 3
-
-Chỉ chuyển sang Phase 3 khi Phase 2 đã hoàn thành:
-
-* [ ] 3 Agent chạy trên 3 Edge VM độc lập.
-* [ ] Network communication hoạt động ổn định.
-* [ ] End-to-End flow hoạt động.
-* [ ] Fault tolerance được kiểm chứng.
-* [ ] Distributed benchmark hoàn tất.
-* [ ] CPU/RAM/latency/throughput đã được đo.
-* [ ] Kết quả Phase 2 đã được so sánh với baseline Phase 1.
 
 ---
 
@@ -601,18 +368,15 @@ Chỉ chuyển sang Phase 3 khi Phase 2 đã hoàn thành:
 │ Multi-Agent Edge AI                 │
 ├─────────────────────────────────────┤
 │                                     │
-│ Phase 1 — MVP                       │
+│ Phase 1 — MVP & Demo                │
 │              ✅ COMPLETED           │
 │                                     │
-│ Phase 2 — Distributed Edge          │
+│ Phase 2 — AI Upgrade                │
 │              🚀 NEXT                │
-│                                     │
-│ Phase 3 — Optimization              │
-│              📋 PLANNED             │
 │                                     │
 └─────────────────────────────────────┘
 ```
 
-**Phase 1 MVP is complete.**
+**Phase 1 MVP & Demo is complete.**
 
-**Next milestone: Phase 2 — Distributed Edge Deployment.**
+**Next milestone: Phase 2 — AI Upgrade for Agent 2.**
