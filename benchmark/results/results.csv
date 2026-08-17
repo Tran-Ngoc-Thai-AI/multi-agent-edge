@@ -1,0 +1,13 @@
+metric,value
+requests,100
+successful,100
+failed,0
+total_time_sec,3.1874
+e2e_p50_ms,31.8751
+e2e_p95_ms,42.6949
+throughput_req_sec,31.3735
+
+container,cpu_avg_percent,cpu_peak_percent,ram_peak_mb
+agent1-sensor,10.6,13.43,40.8
+agent2-analyzer,31.79,43.36,111.0
+agent3-decision,4.11,5.15,36.81

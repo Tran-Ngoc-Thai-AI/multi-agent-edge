@@ -30,5 +30,37 @@ Command:
     curl http://localhost:8003/health
 
 Test end to end:
-    curl -X POST http://localhost:8001/process -H "Content-Type: application/json" -d "{\"temperature\":38.5,\"humidity\":82}"
-    Invoke-RestMethod -Uri "http://localhost:8001/process" -Method Post -Headers @{"Content-Type"="application/json"} -Body '{"temperature":38.5,"humidity":82}'
+    curl -X POST http://localhost:8001/process \
+    -H "Content-Type: application/json" \
+    -d "{\"temperature\":25,\"humidity\":55}"
+
+    python benchmark/benchmark.py
+
+    -----------
+
+    PHASE 1 — MVP
+────────────────────────
+3 VM
+3 Agent
+REST
+Scikit-learn
+Fault tolerance
+Benchmark
+        ↓
+        ↓
+PHASE 2 — Edge AI
+────────────────────────
+Agent 2
+Qwen2.5-0.5B Q4
+llama.cpp
+Benchmark ML vs LLM
+        ↓
+        ↓
+PHASE 3 — Optimization
+────────────────────────
+Q4 vs Q8
+CPU/RAM comparison
+Latency comparison
+Edge-only vs cloud
+MQTT
+Retry/Circuit breaker
