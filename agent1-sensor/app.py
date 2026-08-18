@@ -15,7 +15,7 @@ AGENT2_URL = os.getenv(
     "http://agent2-analyzer:8000"
 )
 AGENT2_TIMEOUT_SEC = float(
-    os.getenv("AGENT2_TIMEOUT_SEC", "10")
+    os.getenv("AGENT2_TIMEOUT_SEC", "25")
 )
 
 

@@ -8,7 +8,7 @@ services:
 
     environment:
       AGENT2_URL: http://agent2-analyzer:8000
-      AGENT2_TIMEOUT_SEC: "10"
+      AGENT2_TIMEOUT_SEC: "25"
 
     ports:
       - "8001:8000"
@@ -28,7 +28,7 @@ services:
 
     environment:
       AGENT3_URL: http://agent3-decision:8000
-      AGENT3_TIMEOUT_SEC: "10"
+      AGENT3_TIMEOUT_SEC: "18"
 
     ports:
       - "8002:8000"
@@ -49,7 +49,7 @@ services:
     environment:
       OLLAMA_URL: http://phase2-ollama:11434
       OLLAMA_MODEL: qwen2.5:0.5b
-      OLLAMA_TIMEOUT_SEC: "15"
+      OLLAMA_TIMEOUT_SEC: "12"
       ALERT_WEBHOOK_URL: ""
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}

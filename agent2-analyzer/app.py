@@ -18,7 +18,7 @@ AGENT3_URL = os.getenv(
     "http://agent3-decision:8000"
 )
 AGENT3_TIMEOUT_SEC = float(
-    os.getenv("AGENT3_TIMEOUT_SEC", "10")
+    os.getenv("AGENT3_TIMEOUT_SEC", "18")
 )
 
 
