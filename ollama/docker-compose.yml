@@ -1,0 +1,14 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: phase2-ollama
+    ports:
+      - "11434:11434"
+    cpus: "2.0"
+    mem_limit: 4g
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  ollama_data:

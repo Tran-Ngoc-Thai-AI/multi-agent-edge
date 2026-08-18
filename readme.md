@@ -2,7 +2,7 @@
 
 ## Phase 1 — MVP: COMPLETED ✅
 
-### 1. Mục tiêu Phase 1
+### Mục tiêu Phase 1
 
 Phase 1 đã hoàn thành MVP của hệ thống **Multi-Agent Edge AI** với:
 
@@ -34,7 +34,7 @@ Response
 
 ---
 
-## 2. Vai trò các Agent
+## Vai trò các Agent
 
 | Agent   | Vai trò  | Port | Chức năng chính                            |
 | ------- | -------- | ---: | ------------------------------------------ |
@@ -44,7 +44,7 @@ Response
 
 ---
 
-## 3. Công nghệ Phase 1
+## Công nghệ Phase 1
 
 * Python 3.12
 * FastAPI
@@ -59,7 +59,7 @@ Response
 
 ---
 
-## 4. Các yêu cầu MVP đã hoàn thành
+## Các yêu cầu MVP đã hoàn thành
 
 * [x] 3 Agent
 * [x] 3 Docker container
@@ -81,7 +81,7 @@ Response
 
 ---
 
-## 5. Fault Tolerance đã kiểm chứng
+## Fault Tolerance đã kiểm chứng
 
 Fault tolerance đã được kiểm tra bằng cách dừng Agent 3:
 
@@ -133,7 +133,7 @@ System hoạt động bình thường
 
 ---
 
-## 6. Benchmark Phase 1
+## Benchmark Phase 1
 
 ### Test Configuration
 
@@ -165,7 +165,7 @@ benchmark/results/results.csv
 
 ---
 
-## 7. Resource Budget
+## Resource Budget
 
 ### Target theo đề bài
 
@@ -181,202 +181,190 @@ Phase 1 hiện tại chạy ổn định với workload MVP và mức sử dụn
 
 ---
 
-# Phase 2 — AI Upgrade
+# Phase 2 — Hybrid Edge AI 🚀
 
-## 8. Mục tiêu
+## Mục tiêu Phase 2
 
-Phase 2 tập trung vào **nâng cấp AI cho Agent 2 — Analyzer**.
+Nâng cấp hệ thống từ **Simple ML** lên **Hybrid Edge AI**, giữ nguyên kiến trúc Multi-Agent và baseline của Phase 1.
 
-Phase 1 sử dụng ML model nhỏ để hoàn thiện MVP và thiết lập baseline.
+```text
+Agent 1 — Sensor
+      ↓
+Agent 2 — ML Analyzer
+      ↓
+IsolationForest
+      ↓
+   ANOMALY?
+    │    │
+   NO   YES
+    │    ↓
+    │  Ollama
+    │    ↓
+    │ Local LLM
+    │    ↓
+    └→ Agent 3
+         ↓
+   Decision + Notification
+```
 
-Phase 2 nâng cấp Agent 2 lên mô hình AI thực tế và có tính kỹ thuật cao hơn, ví dụ **Ollama / LLM**, nhưng vẫn phải hoạt động trong resource constraint:
+### Thành phần
+
+| Component | Role                                 |
+| --------- | ------------------------------------ |
+| Agent 1   | Sensor                               |
+| Agent 2   | ML Analyzer + IsolationForest        |
+| Agent 3   | Decision + Notification              |
+| Ollama    | Local AI Runtime của Agent 3         |
+| Local LLM | AI interpretation / Alert generation |
+| Messaging | Alert delivery                       |
+
+**Ollama không phải Agent độc lập.**
+
+---
+
+## AI Upgrade
+
+IsolationForest tiếp tục là **source of truth** cho anomaly detection.
+
+LLM chỉ được gọi khi:
+
+```text
+IsolationForest → ANOMALY → Ollama → AI Alert
+```
+
+LLM không thay thế hoặc override IsolationForest.
+
+---
+
+## Edge Constraint
 
 ```text
 CPU : 2 vCPU
 RAM : 4 GB
-Mode: CPU-only
+GPU : None
+Execution : CPU-only
 ```
 
-Mục tiêu là đánh giá khả năng chạy AI model nâng cao trong môi trường Edge resource-constrained.
+Model thử nghiệm:
+
+```text
+Qwen2.5 0.5B
+```
+
+Preliminary standalone inference:
+
+```text
+Warm ≈ 0.93s
+Cold-ish ≈ 1.34s
+RAM ≈ 599MB
+```
+
+Benchmark chính thức thực hiện sau khi tích hợp End-to-End.
 
 ---
 
-## 9. AI Upgrade
+## Benchmark
 
-Agent 2 được nâng cấp từ:
+So sánh **Phase 1 Baseline vs Phase 2 Hybrid AI**.
 
-```text
-Phase 1
-Simple ML
-      ↓
-Phase 2
-Advanced AI / LLM
-```
+Metrics chính:
 
-Các hướng nghiên cứu:
+* CPU / RAM
+* Model memory
+* Inference latency
+* E2E latency
+* p50 / p95
+* Throughput
+* Notification latency
+* AI response quality
+* Fault tolerance
 
-* Ollama.
-* Lightweight LLM.
-* Model phù hợp với 2 vCPU / 4 GB RAM.
-* CPU-only inference.
-* Model optimization nếu cần.
-* Quantization nếu cần.
-* Local AI inference.
-
-Kiến trúc Multi-Agent và giao tiếp HTTP của Phase 1 được giữ nguyên.
-
----
-
-## 10. Benchmark Phase 2
-
-Benchmark Phase 2 được so sánh với baseline Phase 1.
-
-Các metric chính:
-
-* CPU usage.
-* RAM usage.
-* Inference latency.
-* E2E latency.
-* p50 latency.
-* p95 latency.
-* Throughput.
-* Model size.
-* AI response quality.
-
-Mục tiêu là đánh giá trade-off giữa:
+Mục tiêu:
 
 ```text
-AI Capability
-      ↕
-CPU / RAM
-      ↕
-Latency
-      ↕
-Throughput
+AI Capability ↔ Resource ↔ Latency ↔ Throughput
 ```
 
 ---
 
-## 11. Mục tiêu hoàn thành Phase 2
+## Fault Tolerance
 
-* [ ] Nâng cấp Agent 2 từ Simple ML lên Advanced AI.
-* [ ] Chạy được AI model trong môi trường CPU-only.
-* [ ] Đáp ứng resource constraint 2 vCPU / 4 GB RAM.
-* [ ] Ollama / LLM hoạt động ổn định nếu được lựa chọn.
-* [ ] Benchmark Phase 2.
-* [ ] So sánh với baseline Phase 1.
-* [ ] Đánh giá CPU / RAM / latency / throughput.
-* [ ] Đánh giá AI response quality.
-* [ ] Đảm bảo End-to-End flow vẫn hoạt động.
-* [ ] Đảm bảo fault tolerance vẫn hoạt động.
+LLM là **AI Enhancement**, không phải thành phần bắt buộc.
 
----
-
-# 12. Roadmap Tổng thể
+Nếu Ollama unavailable:
 
 ```text
-┌──────────────────────────────────────┐
-│ PHASE 1 — MVP & DEMO                 │
-│                                      │
-│ 3 Docker Containers                  │
-│ 3 Agents                             │
-│ HTTP                                │
-│ Local ML                            │
-│ CPU-only                            │
-│ Fault Tolerance                     │
-│ Benchmark                           │
-│                                      │
-│ STATUS: COMPLETED ✅                 │
-└──────────────────┬───────────────────┘
-                   │
-                   ▼
-┌──────────────────────────────────────┐
-│ PHASE 2 — AI UPGRADE                 │
-│                                      │
-│ Agent 2 AI Upgrade                  │
-│ Advanced AI / LLM                   │
-│ Ollama                              │
-│ CPU-only                            │
-│ 2 vCPU / 4 GB RAM                   │
-│ Local AI Inference                  │
-│ Benchmark                           │
-│ AI Quality Evaluation               │
-│                                      │
-│ STATUS: NEXT 🚀                      │
-└──────────────────────────────────────┘
+ANOMALY → Ollama unavailable → Agent 3 → FALLBACK / DEGRADED
 ```
 
+IsolationForest vẫn phải hoạt động độc lập.
+
 ---
 
-# 13. Nguyên tắc thực hiện
-
-Phase 2 giữ nguyên kiến trúc và baseline của Phase 1.
+# Roadmap
 
 ```text
-Phase 1
-Simple ML Baseline
-       ↓
-Agent 2 AI Upgrade
-       ↓
-Advanced AI / LLM
-       ↓
-2 vCPU / 4 GB RAM
-       ↓
+PHASE 1 — MVP
+3 Agents / 3 Docker / HTTP
+IsolationForest / CPU-only
+Fault Tolerance / Benchmark
+
+STATUS: COMPLETED ✅
+        │
+        ▼
+PHASE 2 — HYBRID EDGE AI
+IsolationForest
++
+Ollama / Local LLM
++
+AI Alert
++
+Messaging
++
 Benchmark
-       ↓
-Comparison
+
+STATUS: NEXT 🚀
 ```
 
-Không mở rộng sang Distributed Edge, MQTT hoặc Edge vs Cloud trong scope hiện tại.
+---
+
+## Nguyên tắc Phase 2
+
+* Agent 1 = Sensor
+* Agent 2 = ML Analyzer
+* Agent 3 = Decision + Notification
+* IsolationForest = Core Detection / Source of Truth
+* Ollama = Local AI Runtime của Agent 3
+* LLM chỉ xử lý `ANOMALY`
+* CPU-only
+* 2 vCPU / 4 GB RAM
+* Giữ HTTP architecture
+* Giữ fault tolerance
+* Không mở rộng MQTT / Distributed Edge / Edge vs Cloud trong Phase 2
 
 ---
 
-# 14. Current Status
+## Handoff — New Chat
 
-| Phase   | Nội dung                                                                          | Status      |
-| ------- | --------------------------------------------------------------------------------- | ----------- |
-| Phase 1 | MVP & Demo — 3 Agent / 3 Docker / HTTP / Local ML / Fault Tolerance / Benchmark   | ✅ COMPLETED |
-| Phase 2 | AI Upgrade — Agent 2 / Advanced AI / LLM / Ollama / 2 vCPU / 4 GB RAM / Benchmark | 🚀 NEXT     |
+Bắt đầu **Phase 2 — Hybrid Edge AI** từ code Phase 1 hiện tại.
 
----
-
-# 15. Mục tiêu của Chat tiếp theo
-
-Bắt đầu **Phase 2 — AI Upgrade** từ code Phase 1 hiện tại.
-
-Trình tự:
+Thứ tự thực hiện:
 
 ```text
-1. Kiểm tra Agent 2
-2. Xác định model ML hiện tại
-3. Xác định AI model phù hợp
-4. Tích hợp Advanced AI / Ollama
-5. Chạy CPU-only
-6. Giới hạn 2 vCPU / 4 GB RAM
-7. Test End-to-End
-8. Benchmark
-9. So sánh với Phase 1
-10. Đánh giá kết quả
+1. Kiểm tra code Agent 3 hiện tại
+2. Xác định Agent 2 → Agent 3 HTTP contract
+3. Tích hợp Ollama
+4. Chỉ gọi LLM khi ANOMALY
+5. Structured prompt + JSON output
+6. AI-generated Alert
+7. Messaging
+8. End-to-End Test
+9. Fault Tolerance Test
+10. Benchmark Phase 2
+11. So sánh với Phase 1
+12. Đánh giá AI quality
 ```
 
----
+**Phase 1 = COMPLETED ✅**
 
-# Project Milestone
-
-```text
-┌─────────────────────────────────────┐
-│ Multi-Agent Edge AI                 │
-├─────────────────────────────────────┤
-│                                     │
-│ Phase 1 — MVP & Demo                │
-│              ✅ COMPLETED           │
-│                                     │
-│ Phase 2 — AI Upgrade                │
-│              🚀 NEXT                │
-│                                     │
-└─────────────────────────────────────┘
-```
-
-**Phase 1 MVP & Demo is complete.**
-
-**Next milestone: Phase 2 — AI Upgrade for Agent 2.**
+**Next milestone = Phase 2 — Hybrid Edge AI 🚀**
