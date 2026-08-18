@@ -17,9 +17,11 @@ AGENT3_URL = os.getenv(
     "AGENT3_URL",
     "http://agent3-decision:8000"
 )
+AGENT3_TIMEOUT_SEC = float(
+    os.getenv("AGENT3_TIMEOUT_SEC", "10")
+)
 
 
-# Load model ONCE when container starts
 with open("model.pkl", "rb") as f:
     model = pickle.load(f)
 
@@ -32,7 +34,6 @@ class SensorData(BaseModel):
 
 @app.get("/health")
 def health():
-
     return {
         "agent": "analyzer",
         "status": "UP",
@@ -42,9 +43,7 @@ def health():
 
 @app.get("/metrics")
 def metrics():
-
     process = psutil.Process()
-
     return {
         "agent": "analyzer",
         "cpu_percent": psutil.cpu_percent(interval=0.1),
@@ -54,49 +53,31 @@ def metrics():
 
 @app.post("/analyze")
 def analyze(data: SensorData):
-
     start = time.perf_counter()
 
-    features = np.array([
-        [
-            data.temperature,
-            data.humidity
-        ]
-    ])
-
+    features = np.array([[data.temperature, data.humidity]])
     prediction = model.predict(features)[0]
-
     anomaly_score = model.decision_function(features)[0]
 
-    if prediction == -1:
-        status = "ANOMALY"
-    else:
-        status = "NORMAL"
+    status = "ANOMALY" if prediction == -1 else "NORMAL"
 
     analysis = {
         "temperature": data.temperature,
         "humidity": data.humidity,
-        "anomaly_score": round(
-            float(anomaly_score),
-            4
-        ),
+        "timestamp": data.timestamp,
+        "anomaly_score": round(float(anomaly_score), 4),
         "status": status
     }
 
-    local_latency_ms = (
-        time.perf_counter() - start
-    ) * 1000
+    local_latency_ms = (time.perf_counter() - start) * 1000
 
     try:
-
         response = requests.post(
             f"{AGENT3_URL}/decide",
             json=analysis,
-            timeout=2
+            timeout=AGENT3_TIMEOUT_SEC
         )
-
         response.raise_for_status()
-
         decision = response.json()
 
         return {
@@ -104,16 +85,12 @@ def analyze(data: SensorData):
             "status": "SUCCESS",
             "local_inference": True,
             "model": "IsolationForest",
-            "latency_ms": round(
-                local_latency_ms,
-                2
-            ),
+            "latency_ms": round(local_latency_ms, 2),
             "analysis": analysis,
             "decision": decision
         }
 
     except requests.Timeout:
-
         return {
             "agent": "analyzer",
             "status": "DEGRADED",
@@ -123,7 +100,6 @@ def analyze(data: SensorData):
         }
 
     except requests.RequestException as e:
-
         return {
             "agent": "analyzer",
             "status": "DEGRADED",

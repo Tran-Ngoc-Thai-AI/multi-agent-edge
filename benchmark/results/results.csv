@@ -2,12 +2,13 @@ metric,value
 requests,100
 successful,100
 failed,0
-total_time_sec,3.1874
-e2e_p50_ms,31.8751
-e2e_p95_ms,42.6949
-throughput_req_sec,31.3735
+total_time_sec,424.456
+e2e_p50_ms,5611.6053
+e2e_p95_ms,5935.6168
+throughput_req_sec,0.2356
 
 container,cpu_avg_percent,cpu_peak_percent,ram_peak_mb
-agent1-sensor,10.6,13.43,40.8
-agent2-analyzer,31.79,43.36,111.0
-agent3-decision,4.11,5.15,36.81
+agent1-sensor,0.25,2.8,39.71
+agent2-analyzer,0.4,7.23,106.2
+agent3-decision,0.48,2.09,41.23
+phase2-ollama,147.52,202.52,1679.36

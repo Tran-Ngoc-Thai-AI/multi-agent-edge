@@ -14,6 +14,9 @@ AGENT2_URL = os.getenv(
     "AGENT2_URL",
     "http://agent2-analyzer:8000"
 )
+AGENT2_TIMEOUT_SEC = float(
+    os.getenv("AGENT2_TIMEOUT_SEC", "10")
+)
 
 
 class SensorInput(BaseModel):
@@ -68,7 +71,7 @@ def process_sensor(data: SensorInput):
         response = requests.post(
             f"{AGENT2_URL}/analyze",
             json=payload,
-            timeout=2
+            timeout=AGENT2_TIMEOUT_SEC
         )
 
         response.raise_for_status()

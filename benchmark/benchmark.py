@@ -17,6 +17,7 @@ CONTAINERS = [
     "agent1-sensor",
     "agent2-analyzer",
     "agent3-decision",
+    "phase2-ollama",
 ]
 
 NUM_REQUESTS = 100

@@ -8,6 +8,7 @@ services:
 
     environment:
       AGENT2_URL: http://agent2-analyzer:8000
+      AGENT2_TIMEOUT_SEC: "10"
 
     ports:
       - "8001:8000"
@@ -27,6 +28,7 @@ services:
 
     environment:
       AGENT3_URL: http://agent3-decision:8000
+      AGENT3_TIMEOUT_SEC: "10"
 
     ports:
       - "8002:8000"
@@ -44,8 +46,30 @@ services:
 
     container_name: agent3-decision
 
+    environment:
+      OLLAMA_URL: http://phase2-ollama:11434
+      OLLAMA_MODEL: qwen2.5:0.5b
+      OLLAMA_TIMEOUT_SEC: "15"
+      ALERT_WEBHOOK_URL: ""
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+
     ports:
       - "8003:8000"
 
     cpus: "2.0"
     mem_limit: 4g
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: phase2-ollama
+    ports:
+      - "11434:11434"
+    cpus: "2.0"
+    mem_limit: 4g
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  ollama_data:
