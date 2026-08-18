@@ -265,3 +265,12 @@ Demo đã chứng minh được:
 - Gửi cảnh báo Telegram khi có anomaly
 - Xử lý lỗi theo hướng graceful degradation thay vì crash toàn hệ thống
 
+## Test case
+
+curl -X POST "http://localhost:8001/process" \
+  -H "Content-Type: application/json" \
+  -d '{"temperature":24,"humidity":55}'
+
+curl -X POST "http://localhost:8001/process" \
+  -H "Content-Type: application/json" \
+  -d '{"temperature":39.5,"humidity":88}'
